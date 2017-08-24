@@ -1,0 +1,79 @@
+#!/bin/sh
+
+set -eu
+
+build_dir=$(cd "$1" && pwd)
+cache_dir=$(cd "$2" && pwd)
+env_dir=$(cd "$3" && pwd)
+
+buildpack=$(cd "$(dirname $0)/.." && pwd)
+. "$buildpack/lib/common.sh"
+. "$buildpack/lib/cfg.sh"
+
+# Go
+info "using go $go_version"
+
+go_path="$cache_dir/go/$go_version"
+if [ -d "$go_path" ]; then
+    info "using $go_path"
+else
+    info "$go_path not found"
+
+    action "installing go $go_version"
+    mkdir -p $go_path
+
+    go_file="go$go_version.linux-amd64.tar.gz"
+    download_file $go_file $go_path/$go_file
+
+    info "extracting $go_path/$go_file"
+    tar -C $go_path --strip-components=1 -xzf "$go_path/$go_file"
+    rm "$go_path/$go_file"
+fi
+
+export GOBIN="$build_dir/bin"
+info "using GOBIN=$GOBIN"
+
+export GOROOT=$go_path
+info "using GOROOT=$GOROOT"
+
+export GOPATH="$cache_dir/go"
+info "using GOPATH=$GOPATH"
+mkdir -p $GOPATH
+
+export PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
+
+# Dependencies
+action "installing dependencies"
+
+info "installing glide"
+go get github.com/Masterminds/glide
+
+cd $build_dir
+pkg_name=$(awk '/^package:/ {print $2}' glide.yaml)
+info "building $pkg_name"
+
+pkg_path=$GOPATH/src/$pkg_name
+mkdir -p $(dirname $pkg_path)
+rm -rf $pkg_path
+ln -s $build_dir $pkg_path
+
+info "updating dependencies"
+cd $pkg_path
+glide -q install
+
+# Package
+action "building $pkg_name"
+
+pkg_version=$(cat version)
+info "version $pkg_version"
+
+pkg_git_version=$SOURCE_VERSION
+info "git version $pkg_git_version"
+
+make install
+
+# Profile
+action "configure profile"
+profile_dir="$build_dir/.profile.d"
+mkdir -p $profile_dir
+echo 'PATH=$PATH:$HOME/bin' >"$profile_dir/go.sh"

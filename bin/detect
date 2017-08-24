@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+build_dir=$(cd "$1" && pwd)
+
+if [ -f "$build_dir/glide.yaml" ]; then
+    echo "go"
+    exit 0
+fi
+
+exit 1

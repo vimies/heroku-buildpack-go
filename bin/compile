@@ -41,7 +41,7 @@ export GOPATH="$cache_dir/go"
 info "using GOPATH=$GOPATH"
 mkdir -p $GOPATH
 
-export PATH="$GOBIN:$PATH"
+export PATH="$GOBIN:$GOPATH/bin:$GOROOT/bin:$PATH"
 
 # Dependencies
 action "installing dependencies"

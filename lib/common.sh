@@ -16,6 +16,21 @@ fatal() {
     exit 1
 }
 
+env_variable() {
+    if [ $# -lt 2 ]; then
+        fatal "env_variable: missing argument(s)"
+    fi
+
+    local env_dir name
+    env_dir=$1
+    name=$2
+
+    path="$env_dir/$name"
+    if [ -f "$path" ]; then
+        cat $path
+    fi
+}
+
 download_file() {
     if [ $# -lt 2 ]; then
         fatal "download_file: missing argument(s)"

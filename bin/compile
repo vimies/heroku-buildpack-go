@@ -43,6 +43,16 @@ mkdir -p $GOPATH
 
 export PATH="$GOBIN:$GOPATH/bin:$GOROOT/bin:$PATH"
 
+# Git
+action "configuring git"
+
+github_token=$(env_variable $build_dir "SOUNDS_GITHUB_ACCESS_TOKEN")
+if [ "$github_token" ]; then
+    info "using github access token \$SOUNDS_GITHUB_ACCESS_TOKEN"
+
+    git config --global url."https://$github_token:x-oauth-basic@github.com/".insteadOf "git@github.com:"
+fi
+
 # Dependencies
 action "installing dependencies"
 

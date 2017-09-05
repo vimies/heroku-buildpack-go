@@ -1,0 +1,11 @@
+
+# heroku-buildpack-go
+
+## Configuration
+
+This buildpack uses the following configuration variables:
+
+| Variable                 | Description                                |
+| ------------------------ | -------------------------------------------|
+| `GO_GITHUB_ACCESS_TOKEN` | A Github access token used to get Git      |
+|                          | access to private repositories.            |

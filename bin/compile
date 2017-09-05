@@ -46,7 +46,7 @@ export PATH="$GOBIN:$GOPATH/bin:$GOROOT/bin:$PATH"
 # Git
 action "configuring git"
 
-github_token=$(env_variable $build_dir "GO_GITHUB_ACCESS_TOKEN")
+github_token=$(env_variable $env_dir "GO_GITHUB_ACCESS_TOKEN")
 if [ "$github_token" ]; then
     info "using github access token \$GO_GITHUB_ACCESS_TOKEN"
 

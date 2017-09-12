@@ -1,4 +1,4 @@
 
-go_version="1.8.3"
+go_version="1.9"
 
 heroku_bucket="https://heroku-golang-prod.s3.amazonaws.com"
